@@ -1,18 +1,20 @@
-const User = require("../models/User");
-const {
+import User from "../models/User";
+import {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
-} = require("./verifyToken");
+} from "./verifyToken";
 
-const router = require("express").Router();
+import express, { Router } from "express";
+
+const router: Router = require("express").Router();
 
 //UPDATE
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
   if (req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
       req.body.password,
-      process.env.PASS_SEC
+      process.env.PASS_SEC || ""
     ).toString();
   }
 
@@ -44,6 +46,9 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
 router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(500).json("User is null");
+    }
     const { password, ...others } = user._doc;
     res.status(200).json(others);
   } catch (err) {
@@ -66,7 +71,7 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 
 //GET USER STATS
 
-router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
+router.get("/stats", verifyTokenAndAdmin , async (req, res) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
 
@@ -85,10 +90,10 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
         },
       },
     ]);
-    res.status(200).json(data)
+    res.status(200).json(data);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-module.exports = router;
+export default router;

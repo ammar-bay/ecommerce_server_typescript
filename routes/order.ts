@@ -1,11 +1,13 @@
-const Order = require("../models/Order");
-const {
+import Order from "../models/Order";
+import {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
-} = require("./verifyToken");
+} from "./verifyToken";
 
-const router = require("express").Router();
+import express, { Router } from "express";
+
+const router: Router = express.Router();
 
 //CREATE
 
@@ -140,7 +142,7 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 // GET MONTHLY INCOME
 
 // router.get("/income", verifyTokenAndAdmin, async (req, res) => {
-  router.get("/admin/income",  async (req, res) => {
+router.get("/admin/income", async (req, res) => {
   // console.log("helllooooooooooooooooooooo");
   const productId = req.query.pid;
   // console.log(productId);
@@ -178,4 +180,4 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router

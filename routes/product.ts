@@ -1,14 +1,16 @@
-const Product = require("../models/Product");
-const {
+import Product from "../models/Product"
+import  {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
-} = require("./verifyToken");
+} from "./verifyToken"
 
-const router = require("express").Router();
+import express, { Router } from "express";
+
+
+const router:Router = express.Router();
 
 //CREATE
-
 router.post("/", verifyTokenAndAdmin, async (req, res) => {
   const newProduct = new Product(req.body);
 
@@ -59,7 +61,7 @@ router.get("/find/:id", async (req, res) => {
 //GET ALL PRODUCTS
 router.get("/", async (req, res) => {
   const qNew = req.query.new;
-  const qCategory = req.query.category;
+  const qCategory:any = req.query.category;
   console.log(qCategory);
   console.log(qNew);
   try {
@@ -68,11 +70,12 @@ router.get("/", async (req, res) => {
     if (qNew) {
       products = await Product.find().sort({ createdAt: -1 }).limit(1);
     } else if (qCategory) {
-      products = await Product.find({
-        categories: {
-          $in: [qCategory],
-        },
-      });
+      // products = await Product.find({
+      //   categories: {
+      //     $in: [qCategory],
+      //   },
+      // });
+      products = await Product.find().where("categories").in(qCategory)
     } else {
       products = await Product.find();
     }
@@ -83,4 +86,4 @@ console.log(products);
   }
 });
 
-module.exports = router;
+export default router;
